@@ -8,12 +8,12 @@ def get_html(url):
 
 def get_content(html):
     soup = BeautifulSoup(html, 'lxml')
-    h1 = soup.find('div', id='content').find('h1').text
+    h1 = soup.find('div', class_='row align-items-center').find('h1').text
     return h1
 
 
 def main():
-    url = 'https://modx.ru/o-sisteme-modx/modx-revolution/'
+    url = 'https://modx.com/'
     print(get_content(get_html(url)))
 
 
