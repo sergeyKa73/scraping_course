@@ -16,7 +16,7 @@ def refined(s):
     return r.replace('$', '').replace(',', '') # 1470
 
 def write_csv(data):
-    with open('cms.csv', 'a') as file:
+    with open('data/cms.csv', 'a') as file:
         writer = csv.writer(file)
 
         writer.writerow((data['name'],

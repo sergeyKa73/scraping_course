@@ -7,7 +7,7 @@ def get_html(url):
     return r.text
 
 def write_csv(data):
-    with open('plagin.csv', 'a') as file:
+    with open('data/plagin.csv', 'a') as file:
         writer = csv.writer(file)
 
         writer.writerow((data['name'],

@@ -1,0 +1,66 @@
+import requests
+import fake_useragent
+from bs4 import BeautifulSoup as bs
+import csv
+
+
+user = fake_useragent.UserAgent().random
+header = {'user-agent': user}
+
+
+def get_html(url):
+    r = requests.get(url, headers=header)
+    if r.ok:  # 200  ## 403 404
+        return r.text
+    print(r.status_code)
+
+
+def refined_cy(s):
+    r = s.split(' ')[-1]   # 3200
+    return r
+
+def write_csv(data):
+    with open('data/catalog_by.csv', 'a') as file:
+        writer = csv.writer(file)
+        writer.writerow((data['name'],
+                         data['url'],
+                         data['info'],
+                         data['cy']))
+
+
+def get_page_content(html):
+    soup = bs(html, 'lxml')
+    lst_ya = soup.find_all('li', class_='yaca-snippet')
+
+    for li in lst_ya:
+        try:
+            name = li.find('h2').text.strip()
+        except:
+            name = ''
+        try:
+            url = li.find('h2').find('a').get('href')
+        except:
+            url = ''
+        try:
+            info = li.find('div', class_='yaca-snippet__text').text.strip()
+        except:
+            info = ''
+        try:
+            c = li.find('div', class_="yaca-snippet__cy").text.strip()
+            cy = refined_cy(c)
+        except:
+            cy = ''
+
+        data = {'name': name,
+                'url': url,
+                'info': info,
+                'cy': cy}
+
+        write_csv(data)
+
+def main():
+    url = 'https://yacca.ru/geo/15/'
+    get_page_content(get_html(url))
+
+if __name__ == '__main__':
+    main()
