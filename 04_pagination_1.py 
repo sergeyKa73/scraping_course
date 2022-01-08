@@ -3,9 +3,9 @@ import fake_useragent
 from bs4 import BeautifulSoup as bs
 import csv
 
-
 user = fake_useragent.UserAgent().random
 header = {'user-agent': user}
+CSV = 'data/catalog_by.csv'
 
 
 def get_html(url):
@@ -16,11 +16,12 @@ def get_html(url):
 
 
 def refined_cy(s):
-    r = s.split(' ')[-1]   # 3200
+    r = s.split(' ')[-1]  # 3200
     return r
 
-def write_csv(data):
-    with open('data/catalog_by.csv', 'a') as file:
+
+def write_csv(data, path):
+    with open(path, 'a') as file:
         writer = csv.writer(file)
         writer.writerow((data['name'],
                          data['url'],
@@ -38,7 +39,7 @@ def get_page_content(html):
         except:
             name = ''
         try:
-            url = li.find('h2').find('a').get('href')
+            url = li.find('h2').find('w').get('href')
         except:
             url = ''
         try:
@@ -56,11 +57,18 @@ def get_page_content(html):
                 'info': info,
                 'cy': cy}
 
-        write_csv(data)
+        write_csv(data, CSV)
+
 
 def main():
-    url = 'https://yacca.ru/geo/15/'
-    get_page_content(get_html(url))
+    PAGENATION = input('Укажите кол-во для парсинга: ')
+    PAGENATION = int(PAGENATION.strip())
+    pattern = 'https://yacca.ru/geo/15/{}.html'
+    for i in range(1, PAGENATION + 1):
+        url = pattern.format(str(i))
+        print(f'Парсинг страницы {i}')
+        get_page_content(get_html(url))
+
 
 if __name__ == '__main__':
     main()
